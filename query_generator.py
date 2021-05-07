@@ -5,6 +5,14 @@
 
 import pandas as pd
 import numpy as np
+import re
+import unicodedata
+
+def remove_accents(input_str, regular_expression):
+    nfkd_form = unicodedata.normalize('NFKD', input_str)
+    only_ascii = nfkd_form.encode('ASCII', 'ignore')
+    returned_value = re.sub(regular_expression, '', only_ascii.decode("utf-8").rstrip('\n\r\.'))
+    return returned_value
 
 class CreateQueries():
     
@@ -16,11 +24,13 @@ class CreateQueries():
         value = ''
         columns = ''
         LIMIT = len(data_pd.index)
+        RGEX = '[^A-Za-z0-9 ]+'
+        print("Row number: ", LIMIT)
 
         with open('insert_' + table_name + '.sql', 'w') as insert:
             for row_index in range(LIMIT):
                 if (row_index % 5000 == 0):
-                    print("Row: ", row_index)
+                    print("Processed Rows: ", row_index)
 
                 acum = ''
                 for key, datatype in self.tables[table_name].items():
@@ -30,10 +40,14 @@ class CreateQueries():
                         else:
                             columns = columns + ', ' + "'%s'" % (key)
 
+                    default_value = data_pd.loc[row_index][key]
+                    if (key == 'review_comment_message'):
+                        default_value = remove_accents(data_pd.loc[row_index][key], RGEX)
+
                     if datatype in self.datatypes['sin_comilla'] or data_pd.loc[row_index][key] == 'NULL':
-                        value = '%s' % (data_pd.loc[row_index][key])
+                        value = "%s" % (default_value)
                     else:
-                        value = "'%s'" % (data_pd.loc[row_index][key])
+                        value = "'%s'" % (default_value)
 
                     if not (len(acum)):
                         acum = '(' + value
@@ -57,12 +71,58 @@ tables = {
         'order_delivered_customer_date' : 'datetime',
         'order_estimated_delivery_date' : 'datetime'
     }, 
-    """
-        "nombre_tabla" : {
-            'columna' : 'tipo_dato (sin cantidad) -> ej: CHAR(2) => char',
-            ...
-        }
-    """
+    "olist_sellers" : {
+        "seller_id" : 'nvarchar',
+        'seller_zip_code_prefix' : 'int',
+    },
+    "olist_geolocation": {
+        'geolocation_zip_code_prefix' : 'int',
+        'geolocation_lat' : 'float',
+        'geolocation_lng' : 'flot',
+        'geolocation_city' : 'nvarchar',
+        'geolocation_state' : 'char'
+    },
+    "olist_customers" : {
+        'customer_id' : 'nvarchar',
+        'customer_unique_id' : 'nvarchar',
+        'customer_zip_code_prefix' : 'int',
+    },
+    "olist_order_reviews" : {
+        'review_id' : 'nvarchar',
+        'order_id' : 'nvarchar',
+        'review_score' : 'int',
+        'review_comment_title' : 'nvarchar',
+        'review_comment_message' : 'nvarchar',
+        'review_creation_date' : 'datetime',
+        'review_answer_timestamp' : 'datetime',
+    },
+    "olist_order_payments" : {
+        'order_id' : 'nvarchar',
+        'payment_sequential' : 'int',
+        'payment_type' : 'nvarchar',
+        'payment_installments' : 'int',
+        'payment_value' : 'float',
+    },
+    "olist_products" : {
+        'product_id' : 'nvarchar',
+        'product_category_name' : 'nvarchar',
+        'product_name_lenght' : 'int',
+        'product_description_lenght' : 'int',
+        'product_photos_qty' : 'int',
+        'product_weight_g' : 'float',
+        'product_length_cm' : 'float',
+        'product_height_cm' : 'float',
+        'product_width_cm' : 'float',
+    },
+    "olist_order_items" : {
+        'order_item_id' : 'int',
+        'order_id' : 'nvarchar',
+        'product_id' : 'nvarchar',
+        'seller_id' : 'nvarchar',
+        'shipping_limit_date' : 'datetime',
+        'price' : 'float',
+        'freight_value' : 'float',
+    }
 }
 
 datatypes = {
@@ -71,10 +131,17 @@ datatypes = {
 }
 
 # Revisar el PATH para cada file
-PATH = './olist_orders_dataset.csv'
+PATH = './T1.2.1.Datos/olist_order_reviews_dataset.csv'
 data = pd.read_csv(PATH, sep=',')
 data = data.replace(np.nan, 'NULL')
+
+if ('geolocation' in PATH):
+    print("ANTES: ", len(data.index))
+    data = data.drop_duplicates(subset='geolocation_zip_code_prefix', keep="last").reset_index()
+    #print("DESPUÉS: ", len(data.index))
+    #print(data)
+
 # print(data.columns)
 
 createQueries = CreateQueries(tables, datatypes)
-createQueries.generateInsert('olist_orders', data)
+createQueries.generateInsert('olist_order_reviews', data)
