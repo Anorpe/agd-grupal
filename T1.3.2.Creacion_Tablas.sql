@@ -37,8 +37,6 @@ CREATE TABLE `olist_order_reviews` (
 CREATE TABLE `olist_sellers` (
   `seller_id` NVarchar(100),
   `seller_zip_code_prefix` int,
-  `seller_city` NVarchar(100),
-  `seller_state` CHAR(2),
   PRIMARY KEY (`seller_id`)
 );
 
@@ -46,8 +44,6 @@ CREATE TABLE `olist_customers` (
   `customer_id` NVarchar(100),
   `customer_unique_id` NVarchar(100),
   `customer_zip_code_prefix` int,
-  `customer_city` NVarchar(100),
-  `customer_state` CHAR(2),
   PRIMARY KEY (`customer_id`, `customer_unique_id`)
 );
 
