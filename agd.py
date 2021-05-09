@@ -17,9 +17,9 @@ def create_table_with_data(tablename, con, createSentence, sqlDataFile):
     con.commit()
     print(cursorOlist.execute("SELECT * FROM %s;" % (tablename)).fetchall())
 
-    #sql_file = open(sqlDataFile)
-    #sql_as_string = sql_file.read()
-    #cursorOlist.executescript(sql_as_string)
+    sql_file = open(sqlDataFile, errors='ignore')
+    sql_as_string = sql_file.read()
+    cursorOlist.executescript(sql_as_string)
 
     print(cursorOlist.execute("SELECT * FROM %s LIMIT 5;" % (tablename)).fetchall())
 
@@ -106,7 +106,7 @@ create_table_order_items = """CREATE TABLE `olist_order_items` (
   `shipping_limit_date` DATETIME,
   `price` float,
   `freight_value` float,
-  PRIMARY KEY (`order_item_id`)
+  PRIMARY KEY (`order_item_id`, `order_id`)
 );"""
 
 data = [

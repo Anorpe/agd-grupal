@@ -73,5 +73,5 @@ CREATE TABLE `olist_order_items` (
   `shipping_limit_date` DATETIME,
   `price` float,
   `freight_value` float,
-  PRIMARY KEY (`order_item_id`)
+  PRIMARY KEY (`order_item_id`, `order_id`)
 );
