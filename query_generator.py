@@ -141,6 +141,11 @@ if ('geolocation' in PATH):
     #print("DESPUÉS: ", len(data.index))
     #print(data)
 
+if ('order_reviews' in PATH):
+    print("ANTES: ", len(data.index))
+    data = data.drop_duplicates(subset='review_id', keep="last").reset_index()
+    print("DESPUÉS: ", len(data.index))
+
 # print(data.columns)
 
 createQueries = CreateQueries(tables, datatypes)
