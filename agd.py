@@ -21,7 +21,7 @@ def create_table_with_data(tablename, con, createSentence, sqlDataFile):
     sql_as_string = sql_file.read()
     cursorOlist.executescript(sql_as_string)
 
-    print(cursorOlist.execute("SELECT * FROM %s LIMIT 5;" % (tablename)).fetchall())
+    print(cursorOlist.execute("SELECT COUNT(*) FROM %s;" % (tablename)).fetchall())
 
 con = sql_connection('olist.db')
 
@@ -120,14 +120,14 @@ create_table_order_items = """CREATE TABLE IF NOT EXISTS `olist`.`olist_order_it
 );"""
 
 data = [
-    #{'table': 'olist_geolocation', 'file': 'insert_olist_geolocation.sql', 'create': geolocation_table_sentence},
-    #{'table': 'olist_sellers', 'file': 'insert_olist_sellers.sql', 'create': create_table_sellers},
-    #{'table': 'olist_customers', 'file': 'insert_olist_customers.sql', 'create': create_table_customers},
-    {'table': 'olist_orders', 'file': 'insert_olist_orders.sql', 'create': create_table_orders},
-    #{'table': 'olist_order_payments', 'file': 'insert_olist_order_payments.sql', 'create': create_table_order_payments},
-    #{'table': 'olist_order_reviews', 'file': 'insert_olist_order_reviews.sql', 'create': create_table_order_reviews},
-    #{'table': 'olist_products', 'file': 'insert_olist_products.sql', 'create': create_table_products},
-    #{'table': 'olist_order_items', 'file': 'insert_olist_order_items.sql', 'create': create_table_order_items},
+    #{'table': 'olist_geolocation', 'file': 'queries_insert_per_table/insert_olist_geolocation.sql', 'create': geolocation_table_sentence},
+    #{'table': 'olist_orders', 'file': 'queries_insert_per_table/insert_olist_orders.sql', 'create': create_table_orders},
+    #{'table': 'olist_sellers', 'file': 'queries_insert_per_table/insert_olist_sellers.sql', 'create': create_table_sellers},
+    #{'table': 'olist_customers', 'file': 'queries_insert_per_table/insert_olist_customers.sql', 'create': create_table_customers},
+    #{'table': 'olist_order_reviews', 'file': 'queries_insert_per_table/insert_olist_order_reviews.sql', 'create': create_table_order_reviews},
+    #{'table': 'olist_order_payments', 'file': 'queries_insert_per_table/insert_olist_order_payments.sql', 'create': create_table_order_payments},
+    #{'table': 'olist_products', 'file': 'queries_insert_per_table/insert_olist_products.sql', 'create': create_table_products},
+    {'table': 'olist_order_items', 'file': 'queries_insert_per_table/insert_olist_order_items.sql', 'create': create_table_order_items},
 ]
 
 for table in data:
