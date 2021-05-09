@@ -23,7 +23,7 @@ def create_table_with_data(tablename, con, createSentence, sqlDataFile):
 
     print(cursorOlist.execute("SELECT * FROM %s LIMIT 5;" % (tablename)).fetchall())
 
-con = sql_connection('olist_database.db')
+con = sql_connection('olist.db')
 
 create_table_geolocation = """
 CREATE TABLE IF NOT EXISTS `olist`.`olist_geolocation` (
