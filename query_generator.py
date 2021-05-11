@@ -12,7 +12,7 @@ def remove_accents(input_str, regular_expression):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
     only_ascii = nfkd_form.encode('ASCII', 'ignore')
     returned_value = re.sub(regular_expression, '', only_ascii.decode("utf-8").rstrip('\n\r\.'))
-    return returned_value
+    return returned_value.replace("'",'')
 
 class CreateQueries():
     
