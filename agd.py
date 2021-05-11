@@ -23,6 +23,10 @@ def create_table_with_data(tablename, con, createSentence, sqlDataFile):
 
     print(cursorOlist.execute("SELECT COUNT(*) FROM %s;" % (tablename)).fetchall())
 
+def execute_instruction(con, sql_instruction):
+  cursorOlist = con.cursor()
+  return cursorOlist.execute(sql_instruction).fetchall()
+
 con = sql_connection('olist.db')
 
 create_table_geolocation = """
@@ -130,5 +134,15 @@ data = [
     #{'table': 'olist_order_items', 'file': 'queries_insert_per_table/insert_olist_order_items.sql', 'create': create_table_order_items},
 ]
 
-for table in data:
-    create_table_with_data(table['table'], con, table['create'], table['file'])
+#for table in data:
+#    create_table_with_data(table['table'], con, table['create'], table['file'])
+
+sql_instruction = """
+  SELECT orders.order_id, order_status, review_id
+  FROM olist_orders AS orders
+  INNER JOIN olist_order_reviews AS order_reviews
+  ON (orders.order_id = order_reviews.order_id)
+  LIMIT 5;
+"""
+
+print(execute_instruction(con, sql_instruction))
