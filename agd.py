@@ -138,11 +138,12 @@ data = [
 #    create_table_with_data(table['table'], con, table['create'], table['file'])
 
 sql_instruction = """
-  SELECT orders.order_id, order_status, review_id
-  FROM olist_orders AS orders
-  INNER JOIN olist_order_reviews AS order_reviews
-  ON (orders.order_id = order_reviews.order_id)
-  LIMIT 5;
+  SELECT AVG(cnt)
+  FROM (
+    SELECT geolocation_city,
+    COUNT(geolocation_city) AS cnt
+    FROM olist_geolocation
+    GROUP BY geolocation_city
+  );
 """
-
 print(execute_instruction(con, sql_instruction))
