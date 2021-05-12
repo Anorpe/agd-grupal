@@ -119,7 +119,7 @@
     FROM olist_sellers
     GROUP BY seller_zip_code_prefix;
 
-    /* Código postal en donde hay la mayor cantidad de clientes registrados */
+    /* Código postal en donde hay la mayor cantidad de vendedores registrados */
     SELECT seller_zip_code_prefix, MAX(cnt)
     FROM (
         SELECT seller_zip_code_prefix, COUNT(seller_id) AS cnt
@@ -164,7 +164,6 @@
         INNER JOIN olist_customers AS customers ON (orders.customer_id = customers.customer_id)
         GROUP BY customer_unique_id
     );
-
 
     /* Número de pedidos que se encuentran en cada uno de los estados existentes */
     SELECT order_status, COUNT(order_id)
@@ -273,6 +272,240 @@
 
 /*Consultas de olist_order_payments JULIAN*/
 
-/*Consultas de olist_products DIEGO*/
+/* Consultas de olist_products */
 
-/*Consultas de olist_order_items DIEGO*/
+    /* Cantidad total de productos registrados */
+    SELECT COUNT(*)
+    FROM olist_products;
+
+    /* Cantidad total de productos segun su categoria */
+    SELECT product_category_name,
+    COUNT(*)
+    FROM olist_products
+    GROUP BY product_category_name;
+
+    /* Producto con mayor cantidad de fotos */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        MAX(product_photos_qty) AS cnt
+        FROM olist_products
+    );
+
+    /* Promedio de la cantidad de fotos por producto */
+    SELECT AVG(product_photos_qty)
+    FROM olist_products;
+
+    /* Producto mas pesado */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        MAX(product_weight_g) AS cnt
+        FROM olist_products
+    );
+
+    /* Producto mas liviano */
+    SELECT product_id,
+    MIN(cnt)
+    FROM (
+        SELECT product_id,
+        MIN(product_weight_g) AS cnt
+        FROM olist_products
+    );
+
+    /* Peso promedio de los productos */
+    SELECT AVG(product_weight_g)
+    FROM olist_products;
+
+    /* Producto mas largo */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        MAX(product_length_cm) AS cnt
+        FROM olist_products
+    ); 
+
+    /* Producto menos largo */
+    SELECT product_id,
+    MIN(cnt)
+    FROM (
+        SELECT product_id,
+        MIN(product_length_cm) AS cnt
+        FROM olist_products
+    );
+
+    /* Largo promedio de los productos */
+    SELECT AVG(product_length_cm)
+    FROM olist_products;
+
+    /* Producto mas alto */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        MAX(product_height_cm) AS cnt
+        FROM olist_products
+    ); 
+
+    /* Producto menos alto */
+    SELECT product_id,
+    MIN(cnt)
+    FROM (
+        SELECT product_id,
+        MIN(product_height_cm) AS cnt
+        FROM olist_products
+    );
+
+    /* Altura promedio de los productos */
+    SELECT AVG(product_height_cm)
+    FROM olist_products;
+
+    /* Producto mas ancho */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        MAX(product_width_cm) AS cnt
+        FROM olist_products
+    ); 
+
+    /* Producto menos ancho */
+    SELECT product_id,
+    MIN(cnt)
+    FROM (
+        SELECT product_id,
+        MIN(product_width_cm) AS cnt
+        FROM olist_products
+    );
+
+    /* Anchura promedio de los productos */
+    SELECT AVG(product_width_cm)
+    FROM olist_products;
+
+
+/* Consultas de olist_order_items */
+
+    /* Cantidad total de order items registrados  */
+    SELECT COUNT(*)
+    FROM olist_order_items;
+
+    /* Orden con mayor cantidad de productos */
+    SELECT order_id,
+    MAX(cnt)
+    FROM (
+        SELECT order_id,
+        MAX(order_item_id) AS cnt
+        FROM olist_order_items
+    );
+
+    /* Numero promedio de productos por orden */
+    SELECT AVG(order_item_id)
+    FROM olist_order_items;
+
+    /* Producto mas vendido dentro de las ordenes */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        COUNT(product_id) AS cnt
+        FROM olist_order_items
+    );
+
+    /* Número promedio de productos por orden */
+    SELECT AVG(cnt)
+    FROM (
+        SELECT order_id,
+        COUNT(product_id) AS cnt
+        FROM olist_order_items
+        GROUP BY order_id
+    );
+
+    /* Numero total de vendedores con al menos 1 venta */
+    SELECT COUNT(*)
+    FROM (
+        SELECT DISTINCT seller_id
+        FROM olist_order_items
+    );
+
+    /* Numero total de productos distintos */
+    SELECT COUNT(*)
+    FROM (
+        SELECT DISTINCT product_id
+        FROM olist_order_items
+    );
+
+    /* Vendedor con mayor numero de productos vendidos y cantidad de productos vendidos */
+    SELECT seller_id,
+    MAX(cnt)
+    FROM (
+        SELECT seller_id,
+        COUNT(product_id) AS cnt
+        FROM olist_order_items
+        GROUP BY seller_id
+    );
+
+    /* Vendedor con menor numero de ordenes y cantidad de ordenes asociadas */
+    SELECT seller_id,
+    MIN(cnt)
+    FROM (
+        SELECT seller_id,
+        COUNT(product_id) AS cnt
+        FROM olist_order_items
+        GROUP BY seller_id
+    );
+
+    /* Numero promedio de productos que vende cada vendedor */
+    SELECT AVG(cnt)
+    FROM (
+        SELECT seller_id,
+        COUNT(product_id) AS cnt
+        FROM olist_order_items
+        GROUP BY seller_id
+    );
+
+    /* Producto mas costoso y id asociado */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        MAX(price) AS cnt
+        FROM olist_order_items
+    );
+
+    /* Producto mas barato y id asociado */
+    SELECT product_id,
+    MIN(cnt)
+    FROM (
+        SELECT product_id,
+        MIN(price) AS cnt
+        FROM olist_order_items
+    );
+
+    /* Precio promedio de los productos */
+    SELECT AVG(price)
+    FROM olist_order_items;
+
+    /* Costo de envío mas alto y orden asociada */
+    SELECT product_id,
+    MAX(cnt)
+    FROM (
+        SELECT product_id,
+        MAX(freight_value) AS cnt
+        FROM olist_order_items
+    );
+
+    /* Costo de envío mas bajo y orden asociada */
+    SELECT product_id,
+    MIN(cnt)
+    FROM (
+        SELECT product_id,
+        MIN(freight_value) AS cnt
+        FROM olist_order_items
+    );
+
+    /* Costo promedio de envío de los productos */
+    SELECT AVG(freight_value)
+    FROM olist_order_items;
