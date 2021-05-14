@@ -269,8 +269,14 @@
     );
 
 /*Consultas de olist_order_reviews JULIAN*/
+    /* Cantidad total de reseñas registradas  */
+    SELECT COUNT(*)
+    FROM olist_order_reviews;
 
 /*Consultas de olist_order_payments JULIAN*/
+    /* Cantidad total de pagos registrados  */
+    SELECT COUNT(*)
+    FROM olist_order_payments;
 
 /* Consultas de olist_products */
 
