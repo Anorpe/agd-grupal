@@ -138,12 +138,12 @@ data = [
 #    create_table_with_data(table['table'], con, table['create'], table['file'])
 
 sql_instruction = """
-  SELECT AVG(cnt)
+  SELECT pago,
+  MAX(cuota)
   FROM (
-    SELECT geolocation_city,
-    COUNT(geolocation_city) AS cnt
-    FROM olist_geolocation
-    GROUP BY geolocation_city
+      SELECT payment_type AS pago,
+      MAX(payment_installments) AS cuota
+      FROM olist_order_payments
   );
 """
 print(execute_instruction(con, sql_instruction))

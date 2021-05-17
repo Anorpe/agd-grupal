@@ -268,15 +268,90 @@
         order_delivered_carrier_date < order_delivered_customer_date
     );
 
-/*Consultas de olist_order_reviews JULIAN*/
+/*Consultas de olist_order_reviews */
+
     /* Cantidad total de reseñas registradas  */
     SELECT COUNT(*)
     FROM olist_order_reviews;
 
-/*Consultas de olist_order_payments JULIAN*/
-    /* Cantidad total de pagos registrados  */
+    /* Cantidad total de registros segun su puntuacion en la reseña */
+    SELECT review_score, 
+    COUNT(*)
+    FROM olist_order_reviews
+    GROUP BY review_score;
+
+    /* Promedio de puntuacion de todas las reseñas */
+    SELECT AVG(review_score) 
+    FROM olist_order_reviews;
+
+    /* Cantidad de registros cuya puntuación es superior al promedio de puntuacion de la tabla
+    Para efectos prácticos, se redondea el promedio al entero más cercano */
+    SELECT COUNT(*)
+    FROM olist_order_reviews
+    WHERE review_score >= (
+        SELECT ROUND(AVG(review_score),0)
+        FROM olist_order_reviews);
+
+/*Consultas de olist_order_payments*/
+    /* Cantidad total de pagos registrados */
     SELECT COUNT(*)
     FROM olist_order_payments;
+
+    /* Promedio de valor de todos los pagos realizados */
+    SELECT AVG(payment_value) 
+    FROM olist_order_payments;
+
+    /* Suma de los pagos realizados agrupados por su metodo de pago */
+    SELECT payment_type, ROUND(SUM(payment_value),2) 
+    FROM olist_order_payments
+    GROUP BY payment_type;
+
+    /* Conteo de los pagos realizados agrupados por su metodo de pago */
+    SELECT payment_type, COUNT(*) 
+    FROM olist_order_payments
+    GROUP BY payment_type;
+
+    /* Total de registros agrupados por sus secuencias de pago */
+    SELECT payment_sequential, COUNT(*) 
+    FROM olist_order_payments
+    GROUP BY payment_sequential;
+
+    /* Promedio de las secuencias de pago de todos los pagos realizados */
+    SELECT AVG(payment_sequential) 
+    FROM olist_order_payments;
+
+    /* Orden y metodo de pago de la orden que posee el valor maximo */
+    SELECT order_id,
+    pago,
+    MAX(pay)
+    FROM (
+        SELECT order_id,
+        payment_type AS pago,
+        MAX(payment_value) AS pay
+        FROM olist_order_payments
+    );
+
+    /* Orden que posee el mayor número de secuencias de pago */
+    SELECT order_id,
+    MAX(seq)
+    FROM (
+        SELECT order_id,
+        MAX(payment_sequential) AS seq
+        FROM olist_order_payments
+    );
+
+    /* Promedio de cuotas de todos los pagos realizados */
+    SELECT AVG(payment_sequential) 
+    FROM olist_order_payments;
+
+    /* Metodo de pago de las ordenes que posee el mayor número de cuotas */
+    SELECT pago,
+    MAX(cuota)
+    FROM (
+        SELECT payment_type AS pago,
+        MAX(payment_installments) AS cuota
+        FROM olist_order_payments
+    );
 
 /* Consultas de olist_products */
 
