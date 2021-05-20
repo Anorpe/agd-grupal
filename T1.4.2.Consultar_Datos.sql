@@ -143,39 +143,6 @@
     /* Cantidad total de registros */
     db.olist_orders_dataset.count();
 
-    /* Número de pedidos realizados por un cliente */
-    SELECT customer_unique_id, COUNT(order_id)
-    FROM olist_orders AS orders
-    INNER JOIN olist_customers AS customers ON (orders.customer_id = customers.customer_id)
-    GROUP BY customer_unique_id;
-
-    db.olist_orders_dataset.aggregate([{
-        $lookup : {
-            from: "olist_customers_dataset",
-            localField: "customer_id",
-            foreignField: "customer_id",
-            as: "Customers"
-        }
-    }]);
-
-    /* Mayor cantidad de pedidos realizados por un cliente */
-    SELECT customer_unique_id, MAX(cnt)
-    FROM (
-        SELECT customer_unique_id, COUNT(order_id) AS cnt
-        FROM olist_orders AS orders
-        INNER JOIN olist_customers AS customers ON (orders.customer_id = customers.customer_id)
-        GROUP BY customer_unique_id
-    );
-
-    /* Menor cantidad de pedidos realizados por un cliente */
-    SELECT customer_unique_id, MAX(cnt)
-    FROM (
-        SELECT customer_unique_id, COUNT(order_id) AS cnt
-        FROM olist_orders AS orders
-        INNER JOIN olist_customers AS customers ON (orders.customer_id = customers.customer_id)
-        GROUP BY customer_unique_id
-    );
-
     /* Número de pedidos que se encuentran en cada uno de los estados existentes */
     db.olist_orders_dataset.aggregate([
         { "$group":
