@@ -138,12 +138,8 @@ data = [
 #    create_table_with_data(table['table'], con, table['create'], table['file'])
 
 sql_instruction = """
-  SELECT pago,
-  MAX(cuota)
-  FROM (
-      SELECT payment_type AS pago,
-      MAX(payment_installments) AS cuota
-      FROM olist_order_payments
-  );
+  SELECT payment_sequential, COUNT(*) 
+    FROM olist_order_payments
+    GROUP BY payment_sequential;
 """
 print(execute_instruction(con, sql_instruction))
