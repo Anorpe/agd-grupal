@@ -341,7 +341,7 @@
     );
 
     /* Promedio de cuotas de todos los pagos realizados */
-    SELECT AVG(payment_sequential) 
+    SELECT AVG(payment_installments) 
     FROM olist_order_payments;
 
     /* Metodo de pago de las ordenes que posee el mayor número de cuotas */
