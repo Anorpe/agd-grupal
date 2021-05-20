@@ -71,6 +71,63 @@
 
 /* Consultas de olist_orders */
 
+    /* Cantidad total de registros */
+    db.olist_orders_dataset.count();
+
+    /* Número de pedidos realizados por un cliente */
+    SELECT customer_unique_id, COUNT(order_id)
+    FROM olist_orders AS orders
+    INNER JOIN olist_customers AS customers ON (orders.customer_id = customers.customer_id)
+    GROUP BY customer_unique_id;
+
+    db.olist_orders_dataset.aggregate([{
+        $lookup : {
+            from: "olist_customers_dataset",
+            localField: "customer_id",
+            foreignField: "customer_id",
+            as: "Customers"
+        }
+    }]);
+
+    /* Mayor cantidad de pedidos realizados por un cliente */
+    SELECT customer_unique_id, MAX(cnt)
+    FROM (
+        SELECT customer_unique_id, COUNT(order_id) AS cnt
+        FROM olist_orders AS orders
+        INNER JOIN olist_customers AS customers ON (orders.customer_id = customers.customer_id)
+        GROUP BY customer_unique_id
+    );
+
+    /* Menor cantidad de pedidos realizados por un cliente */
+    SELECT customer_unique_id, MAX(cnt)
+    FROM (
+        SELECT customer_unique_id, COUNT(order_id) AS cnt
+        FROM olist_orders AS orders
+        INNER JOIN olist_customers AS customers ON (orders.customer_id = customers.customer_id)
+        GROUP BY customer_unique_id
+    );
+
+    /* Número de pedidos que se encuentran en cada uno de los estados existentes */
+    SELECT order_status, COUNT(order_id)
+    FROM olist_orders
+    GROUP BY order_status;
+
+    /* El estado de pedido que tiene asociado la mayor cantidad de registros */
+    SELECT order_status, MAX(cnt)
+    FROM (
+        SELECT order_status, COUNT(order_id) AS cnt
+        FROM olist_orders
+        GROUP BY order_status
+    );
+
+    /* El estado de pedido que tiene asociado la menor cantidad de registros */
+    SELECT order_status, MIN(cnt)
+    FROM (
+        SELECT order_status, COUNT(order_id) AS cnt
+        FROM olist_orders
+        GROUP BY order_status
+    );
+
 /* Consultas de olist_order_reviews */
     /* Cantidad total de reseñas registradas  
         /* db.olist_order_reviews_dataset.count()
