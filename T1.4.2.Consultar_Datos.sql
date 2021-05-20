@@ -177,25 +177,34 @@
     );
 
     /* Número de pedidos que se encuentran en cada uno de los estados existentes */
-    SELECT order_status, COUNT(order_id)
-    FROM olist_orders
-    GROUP BY order_status;
+    db.olist_orders_dataset.aggregate([
+        { "$group":
+            { "_id" : {"order_status" : "$order_status" },
+            "cnt" : { "$sum" : 1 } } 
+        }
+    ]);
 
-    /* El estado de pedido que tiene asociado la mayor cantidad de registros */
-    SELECT order_status, MAX(cnt)
-    FROM (
-        SELECT order_status, COUNT(order_id) AS cnt
-        FROM olist_orders
-        GROUP BY order_status
-    );
+    /* Mayor cantidad de registros en un estado de pedido */
+    db.olist_orders_dataset.aggregate([
+        {"$group":{_id:"$order_status",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                mayor:{'$max':'$count'}
+            }
+        }            
+    ]);
 
-    /* El estado de pedido que tiene asociado la menor cantidad de registros */
-    SELECT order_status, MIN(cnt)
-    FROM (
-        SELECT order_status, COUNT(order_id) AS cnt
-        FROM olist_orders
-        GROUP BY order_status
-    );
+    /* Menor cantidad de registros en un estado de pedido */
+    db.olist_orders_dataset.aggregate([
+        {"$group":{_id:"$order_status",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                menor:{'$min':'$count'}
+            }
+        }            
+    ]);
 
 /* Consultas de olist_order_reviews */
     /* Cantidad total de reseñas registradas */ 
