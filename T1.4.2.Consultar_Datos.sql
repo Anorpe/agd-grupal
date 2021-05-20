@@ -209,3 +209,125 @@
 
 /* Consultas de olist_order_items */
 
+    /* Cantidad total de order items registrados  */
+  
+
+    db.olist_order_items_dataset.count();
+
+    /* Orden con mayor cantidad de productos */
+  
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$order_id",max:{$max:"$order_item_id"}}}
+        ,
+        {"$group":{_id:null,mayor:{'$max':'$max'}}}
+    ]);
+
+    /* Numero promedio de productos por orden */
+   
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:null,avg:{$avg:"$order_item_id"}}}
+        
+    ]);
+
+    /* Producto mas vendido dentro de las ordenes */
+  
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$product_id",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,mayor:{'$max':'$count'}}}
+    ]);
+
+    /* Número promedio de productos por orden */
+ 
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$order_id",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,avg:{'$avg':'$count'}}}
+    ]);
+
+    /* Numero total de vendedores con al menos 1 venta */
+ 
+
+    db.olist_order_items_dataset.distinct('seller_id').length;
+
+    /* Numero total de productos distintos */
+
+
+    db.olist_order_items_dataset.distinct('product_id').length;
+
+    /* Vendedor con mayor numero de productos vendidos y cantidad de productos vendidos */
+ 
+    
+
+    /* Vendedor con menor numero de ordenes y cantidad de ordenes asociadas */
+  
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$seller_id",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,min:{'$min':'$count'}}}
+    ]);
+
+    /* Numero promedio de productos que vende cada vendedor */
+
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$seller_id",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,avg:{'$avg':'$count'}}}
+    ]);
+
+    /* Producto mas costoso y id asociado */
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$product_id",max:{$max:"$price"}}}
+        ,
+        {"$group":{_id:null,max:{'$max':'$max'}}}
+    ]);
+
+    /* Producto mas barato y id asociado */
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$product_id",max:{$min:"$price"}}}
+        ,
+        {"$group":{_id:null,min :{'$min':'$max'}}}
+    ]);
+
+    /* Precio promedio de los productos */
+
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:null,avg:{$avg:"$price"}}}
+        
+    ]);
+
+    /* Costo de envío mas alto y orden asociada */
+
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$product_id",max:{$max:"$freight_value"}}}
+        ,
+        {"$group":{_id:null,max :{'$max':'$max'}}}
+    ]);
+
+
+    /* Costo de envío mas bajo y orden asociada */
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:"$product_id",max:{$min:"$freight_value"}}}
+        ,
+        {"$group":{_id:null,min :{'$min':'$max'}}}
+    ]);
+
+    /* Costo promedio de envío de los productos */
+
+    db.olist_order_items_dataset.aggregate([
+        {"$group":{_id:null,avg:{$avg:"$freight_value"}}}
+        
+    ]);
+
+
