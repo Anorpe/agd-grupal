@@ -4,6 +4,7 @@
     SELECT COUNT(*)
     FROM olist_geolocation;
 
+
     /*Conteo cantidad total de estados diferentes*/
     SELECT COUNT(*)
     FROM (
@@ -11,17 +12,21 @@
         FROM olist_geolocation
     );
 
+
     /*Conteo cantidad total de registros por ciudad*/
     SELECT geolocation_city,
     COUNT(*)
     FROM olist_geolocation 
     GROUP BY geolocation_city;
 
+
     /*Conteo cantidad total de registros por estado*/
     SELECT geolocation_state,
     COUNT(*)
     FROM olist_geolocation 
     GROUP BY geolocation_state;
+
+    
 
     /*Ciudad con mayor numero de registros*/
     SELECT geolocation_city, 
@@ -33,6 +38,8 @@
         GROUP BY geolocation_city
     );
 
+
+
     /*Ciudad con menor numero de registros*/
     SELECT geolocation_city, 
     MIN(cnt)
@@ -42,6 +49,7 @@
         FROM olist_geolocation
         GROUP BY geolocation_city
     );
+
 
     /*Estado con mayor numero de registros*/
     SELECT geolocation_state, 
@@ -53,6 +61,8 @@
         GROUP BY geolocation_state
     );
 
+ 
+
     /*Ciudad con menor numero de registros*/
     SELECT geolocation_state, 
     MIN(cnt)
@@ -63,6 +73,8 @@
         GROUP BY geolocation_state
     );
 
+
+
     /*Numero promedio de registros por ciudad*/
     SELECT AVG(cnt)
     FROM (
@@ -72,6 +84,7 @@
         GROUP BY geolocation_city
     );
 
+
     /*Numero promedio de registros por estado*/
     SELECT AVG(cnt)
     FROM (
@@ -80,6 +93,8 @@
         FROM olist_geolocation
         GROUP BY geolocation_state
     );
+
+
 
 /* Consultas de olist_customers */
 
@@ -341,7 +356,7 @@
     );
 
     /* Promedio de cuotas de todos los pagos realizados */
-    SELECT AVG(payment_installments) 
+    SELECT AVG(payment_sequential) 
     FROM olist_order_payments;
 
     /* Metodo de pago de las ordenes que posee el mayor número de cuotas */
