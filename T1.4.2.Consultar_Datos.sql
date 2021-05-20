@@ -140,35 +140,69 @@
 
 /* Consultas de olist_orders */
 
-/* Consultas de olist_order_reviews */
-    /* Cantidad total de reseñas registradas  
-        /* db.olist_order_reviews_dataset.count()
+    /* Cantidad total de registros */
+    db.olist_orders_dataset.count();
 
-    /* Cantidad total de registros segun su puntuacion en la reseña 
-        /* db.olist_order_reviews_dataset.aggregate([{
+    /* Número de pedidos que se encuentran en cada uno de los estados existentes */
+    db.olist_orders_dataset.aggregate([
+        { "$group":
+            { "_id" : {"order_status" : "$order_status" },
+            "cnt" : { "$sum" : 1 } } 
+        }
+    ]);
+
+    /* Mayor cantidad de registros en un estado de pedido */
+    db.olist_orders_dataset.aggregate([
+        {"$group":{_id:"$order_status",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                mayor:{'$max':'$count'}
+            }
+        }            
+    ]);
+
+    /* Menor cantidad de registros en un estado de pedido */
+    db.olist_orders_dataset.aggregate([
+        {"$group":{_id:"$order_status",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                menor:{'$min':'$count'}
+            }
+        }            
+    ]);
+
+/* Consultas de olist_order_reviews */
+    /* Cantidad total de reseñas registradas */ 
+        db.olist_order_reviews_dataset.count()
+
+    /* Cantidad total de registros segun su puntuacion en la reseña */
+        db.olist_order_reviews_dataset.aggregate([{
             "$group" : {
-                "_id" : {"secuencia": "$review_score"},
+                "_id" : {"puntuacion": "$review_score"},
                 "cantidad_registros" : {"$sum" : 1}
             }
         },{
         "$sort": {
-            "cantidad_registros": 1}}]);
+            "cantidad_registros": -1}}]);
 
-    /* Promedio de puntuacion de todas las reseñas 
-        /* db.olist_order_reviews_dataset.aggregate([{$group: {_id: null, promedio: {$avg: "$review_score"}}}]);
+    /* Promedio de puntuacion de todas las reseñas */
+        db.olist_order_reviews_dataset.aggregate([{
+            $group: {_id: null, promedio: {$avg: "$review_score"}}
+        }]);
     
-    /* Cantidad de registros cuya puntuación es superior al promedio de puntuacion de la tabla
-    Para efectos prácticos, se redondea el promedio al entero más cercano */
-
 /* Consultas de olist_order_payments */
-    /* Cantidad total de pagos registrados 
-        /* db.olist_payments_dataset.count()
+    /* Cantidad total de pagos registrados */
+        db.olist_payments_dataset.count()
 
     /* Promedio de valor de todos los pagos realizados */
-        /* db.olist_payments_dataset.aggregate([{$group: {_id: null, promedio: {$avg: "$payment_value"}}}]);
+        db.olist_payments_dataset.aggregate([{
+            $group: {_id: null, promedio: {$avg: "$payment_value"}}
+        }]);
 
     /* Suma de los pagos realizados agrupados por su metodo de pago */
-        /* db.olist_payments_dataset.aggregate([{
+        db.olist_payments_dataset.aggregate([{
             "$group" : {
                 "_id" : {"tipo_pago": "$payment_type"},
                 "total_valores" : {"$sum" : "$payment_value"}
@@ -176,7 +210,7 @@
         }]);
 
     /* Conteo de los pagos realizados agrupados por su metodo de pago */
-        /* db.olist_payments_dataset.aggregate([{
+        db.olist_payments_dataset.aggregate([{
             "$group" : {
                 "_id" : {"tipo_pago": "$payment_type"},
                 "cantidad_registros" : {"$sum" : 1}
@@ -184,7 +218,7 @@
         }]);
 
     /* Total de registros agrupados por sus secuencias de pago */
-        /* db.olist_payments_dataset.aggregate([{
+        db.olist_payments_dataset.aggregate([{
             "$group" : {
                 "_id" : {"secuencia": "$payment_sequential"},
                 "cantidad_registros" : {"$sum" : 1}
@@ -194,18 +228,207 @@
             "cantidad_registros": -1}}]);
 
     /* Promedio de las secuencias de pago de todos los pagos realizados */
-        /* db.olist_payments_dataset.aggregate([{$group: {_id: null, promedio: {$avg: "$payment_sequential"}}}]);
-
-    /* Orden y metodo de pago de la orden que posee el valor maximo */
-
-    /* Orden que posee el mayor número de secuencias de pago */
+        db.olist_payments_dataset.aggregate([{
+            $group: {_id: null, promedio: {$avg: "$payment_sequential"}}
+        }]);
 
     /* Promedio de cuotas de todos los pagos realizados */
-        /* db.olist_payments_dataset.aggregate([{$group: {_id: null, promedio: {$avg: "$payment_installments"}}}]);
-
-    /* Metodo de pago de las ordenes que posee el mayor número de cuotas */
+        db.olist_payments_dataset.aggregate([{
+            $group: {_id: null, promedio: {$avg: "$payment_installments"}}
+        }]);
 
 /* Consultas de olist_products */
+
+    /* Cantidad total de productos registrados */
+    db.olist_products_dataset.count();
+
+    /* Cantidad total de productos segun su categoria */
+    db.olist_products_dataset.aggregate([
+        { "$group":
+            { "_id" : {"product_category_name" : "$product_category_name" },
+            "cnt" : { "$sum" : 1 } } 
+        }
+    ]);
+
+    /* Mayor cantidad de fotos en un producto */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_photos_qty",count:{$max:"$product_photos_qty"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                mayor:{'$max':'$count'}
+            }
+        }
+    ]);
+
+    /* Promedio de la cantidad de fotos por producto */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:null, count:{$avg:"$product_photos_qty"}
+            }
+        }
+    ]);
+
+    /* Peso mayor de un producto */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_weight_g",count:{$max:"$product_weight_g"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                peso_mayor:{'$max':'$count'}
+            }
+        }
+    ]);
+
+    /* Peso menor de un producto */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_weight_g",count:{$min:"$product_weight_g"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                peso_menor:{'$min':'$count'}
+            }
+        }
+    ]);
+
+    /* Peso promedio de los productos (en gramos) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:null, peso_promedio:{$avg:"$product_weight_g"}
+            }
+        }
+    ]); 
+
+    /* Longitud mayor de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_length_cm",count:{$max:"$product_length_cm"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                longitud_mayor:{'$max':'$count'}
+            }
+        }
+    ]);
+
+    /* Longitud menor de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_length_cm",count:{$min:"$product_length_cm"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                longitud_menor:{'$min':'$count'}
+            }
+        }
+    ]);
+
+    /* Longitud promedio de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:null, longitud_promedio:{$avg:"$product_length_cm"}
+            }
+        }
+    ]);
+
+    /* Altura mayor de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_height_cm",count:{$max:"$product_height_cm"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                Altura_mayor:{'$max':'$count'}
+            }
+        }
+    ]);
+
+    /* Altura menor de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_height_cm",count:{$min:"$product_height_cm"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                Altura_menor:{'$min':'$count'}
+            }
+        }
+    ]);
+
+    /* Altura promedio de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:null, Altura_promedio:{$avg:"$product_height_cm"}
+            }
+        }
+    ]);
+
+    /* Anchura mayor de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_width_cm",count:{$max:"$product_width_cm"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                Anchura_mayor:{'$max':'$count'}
+            }
+        }
+    ]);
+
+    /* Anchura menor de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:"$product_width_cm",count:{$min:"$product_width_cm"}
+            }
+        },
+        {"$group":
+            {
+                _id:null,
+                Anchura_menor:{'$min':'$count'}
+            }
+        }
+    ]);
+
+    /* Anchura promedio de un producto (en cm) */
+    db.olist_products_dataset.aggregate([
+        {"$group": 
+            {
+                _id:null, Anchura_promedio:{$avg:"$product_width_cm"}
+            }
+        }
+    ]);
 
 /* Consultas de olist_order_items */
 
