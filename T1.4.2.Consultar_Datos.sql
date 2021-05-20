@@ -1,8 +1,73 @@
 /* Consultas de olist_geolocation */
 
 /* Consultas de olist_customers */
+    /* Cantidad total de registros */
+    db.olist_customers_dataset.count();
+
+    /* Cantidad de clientes registrados por código postal */
+    db.olist_customers_dataset.aggregate([{
+        "$group" : {
+            "_id" : { "customer_zip_code_prefix" : "$customer_zip_code_prefix" },
+            "cnt" : { "$sum" : 1 }
+        }
+    }]);
+
+    /* Código postal en donde hay la mayor cantidad de clientes registrados */
+    db.olist_customers_dataset.aggregate([
+        {"$group":{_id:"$customer_zip_code_prefix",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                mayor:{'$max':'$count'}
+            }
+        }            
+    ]);
+
+    /* Código postal en donde hay la menor cantidad de clientes registrados */
+    db.olist_customers_dataset.aggregate([
+        {"$group":{_id:"$customer_zip_code_prefix",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                menor:{'$min':'$count'}
+            }
+        }            
+    ]);
 
 /* Consultas de olist_sellers */
+
+    /* Cantidad total de vendedores registrados */
+    db.olist_sellers_dataset.count();
+
+    /* Cantidad de vendedores registrados por código postal */
+    db.olist_sellers_dataset.aggregate([{
+        "$group" : {
+            "_id" : { "seller_zip_code_prefix" : "$seller_zip_code_prefix" },
+            "cnt" : { "$sum" : 1 }
+        }
+    }]);
+
+    /* Código postal en donde hay la mayor cantidad de vendedores registrados */
+    db.olist_sellers_dataset.aggregate([
+        {"$group":{_id:"$seller_zip_code_prefix",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                mayor:{'$max':'$count'}
+            }
+        }
+    ]);
+
+    /* Código postal en donde hay la menor cantidad de clientes registrados */
+    db.olist_sellers_dataset.aggregate([
+        {"$group":{_id:"$seller_zip_code_prefix",count:{$sum:1}}},
+        {"$group":
+            {
+                _id:null,
+                menor:{'$min':'$count'}
+            }
+        }
+    ]);
 
 /* Consultas de olist_orders */
 
