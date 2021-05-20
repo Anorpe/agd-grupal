@@ -1,5 +1,74 @@
 /* Consultas de olist_geolocation */
 
+    /*Conteo cantidad total de registros*/
+   
+    db.olist_geolocation_dataset.count();
+
+    /*Conteo cantidad total de estados diferentes*/
+
+    db.olist_geolocation_dataset.distinct('geolocation_state').length;
+
+    /*Conteo cantidad total de registros por ciudad*/
+   
+    db.olist_geolocation_dataset.aggregate([{"$group":{_id:"$geolocation_city",count:{$sum:1}}}]);
+
+    /*Conteo cantidad total de registros por estado*/
+
+    db.olist_geolocation_dataset.aggregate([{"$group":{_id:"$geolocation_state",count:{$sum:1}}}]);
+    
+
+    /*Ciudad con mayor numero de registros*/
+
+    db.olist_geolocation_dataset.aggregate([
+        {"$group":{_id:"$geolocation_city",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,mayor:{'$max':'$count'}}}
+    ]);
+
+    /*Ciudad con menor numero de registros*/
+ 
+    db.olist_geolocation_dataset.aggregate([
+        {"$group":{_id:"$geolocation_city",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,menor:{'$min':'$count'}}}
+    ]);
+
+    /*Estado con mayor numero de registros*/
+
+    db.olist_geolocation_dataset.aggregate([
+        {"$group":{_id:"$geolocation_state",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,mayor:{'$max':'$count'}}}
+    ]);
+
+    /*Ciudad con menor numero de registros*/
+
+
+    db.olist_geolocation_dataset.aggregate([
+        {"$group":{_id:"$geolocation_state",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,menor:{'$min':'$count'}}}
+    ]);
+
+    /*Numero promedio de registros por ciudad*/
+   
+
+    db.olist_geolocation_dataset.aggregate([
+        {"$group":{_id:"$geolocation_city",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,avg:{'$avg':'$count'}}}
+    ]);
+
+    /*Numero promedio de registros por estado*/
+    
+
+    db.olist_geolocation_dataset.aggregate([
+        {"$group":{_id:"$geolocation_state",count:{$sum:1}}}
+        ,
+        {"$group":{_id:null,avg:{'$avg':'$count'}}}
+    ]);
+
+
 /* Consultas de olist_customers */
     /* Cantidad total de registros */
     db.olist_customers_dataset.count();
