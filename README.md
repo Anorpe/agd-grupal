@@ -36,7 +36,7 @@ Archivo que contiene la creación de, al menos, 20 documentos en las tablas de M
 ### 8. T1.4.2.Consultar_Datos
 Archivo que contiene las consultas realizadas a las diferentes tablas en MongoDB
 
-### 9. Trabajo_Arquitectura de la Información
+### 9. Trabajo_Arquitectura_de_la_Informacion
 Archivo en el cual se encuentra el detalle del trabajo realizado
 
 ### 10. agd
